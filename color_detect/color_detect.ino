@@ -1,15 +1,8 @@
 /*
-  Color Sensor Calibration
-  color-sensor-calib.ino
-  Calibrate RGB Color Sensor output Pulse Widths
-  Uses values obtained for RGB Sensor Demo sketch 
-
-  DroneBot Workshop 2020
-  https://dronebotworkshop.com
+  Arduino Code to Measure Pulse Widths and Send to Python
 */
 
 // Define color sensor pins
-
 #define S0 4
 #define S1 5
 #define S2 6
@@ -17,13 +10,14 @@
 #define sensorOut 8
 
 // Variables for Color Pulse Width Measurements
-
 int redPW = 0;
 int greenPW = 0;
 int bluePW = 0;
 
-void setup() {
+// Threshold for color detection
+int threshold = 200;
 
+void setup() {
   // Set S0 - S3 as outputs
   pinMode(S0, OUTPUT);
   pinMode(S1, OUTPUT);
@@ -34,103 +28,54 @@ void setup() {
   pinMode(sensorOut, INPUT);
   
   // Set Pulse Width scaling to 20%
-  digitalWrite(S0,HIGH);
-  digitalWrite(S1,LOW);
+  digitalWrite(S0, HIGH);
+  digitalWrite(S1, LOW);
   
   // Setup Serial Monitor
   Serial.begin(9600);
 }
 
 void loop() {
-  
   // Read Red Pulse Width
   redPW = getRedPW();
-  // Delay to stabilize sensor
-  delay(200);
+  delay(200); // Delay to stabilize sensor
   
   // Read Green Pulse Width
   greenPW = getGreenPW();
-  // Delay to stabilize sensor
-  delay(200);
+  delay(200); // Delay to stabilize sensor
   
   // Read Blue Pulse Width
   bluePW = getBluePW();
-  // Delay to stabilize sensor
+  delay(200); // Delay to stabilize sensor
   
-  // Print output to Serial Monitor
-  Serial.print("Red PW = ");
+  // Send pulse widths to Python over Serial
+  Serial.print("R:");
   Serial.print(redPW);
-  Serial.print(" - Green PW = ");
+  Serial.print(" G:");
   Serial.print(greenPW);
-  Serial.print(" - Blue PW = ");
+  Serial.print(" B:");
   Serial.println(bluePW);
 
-  int thres = 200;
-   if(redPW < thres && greenPW < thres && bluePW < thres){
-    Serial.println("White");
-   } else if (redPW > thres && greenPW > thres && bluePW > thres) {
-    // Detected color is Red
-    Serial.println("Detected: Black"); 
-   } else if (redPW < thres && greenPW > thres && bluePW > thres) {
-    // Detected color is Red
-    Serial.println("Detected: Red");
-  } else if (greenPW < thres &&  redPW > thres && bluePW > thres) {
-    // Detected color is Green
-    Serial.println("Detected: Green");
-  } else if (bluePW < thres && greenPW > thres && redPW > thres) {
-    // Detected color is Blue
-    Serial.println("Detected: Blue");
-  } else {
-    // If no dominant color is detected, turn off all LEDs
-    Serial.println("No dominant color detected");
-  };
-  delay(200); 
-  
+  delay(200);
 }
-
 
 // Function to read Red Pulse Widths
 int getRedPW() {
-
-  // Set sensor to read Red only
-  digitalWrite(S2,LOW);
-  digitalWrite(S3,LOW);
-  // Define integer to represent Pulse Width
-  int PW;
-  // Read the output Pulse Width
-  PW = pulseIn(sensorOut, LOW);
-  // Return the value
-  return PW;
-
+  digitalWrite(S2, LOW);
+  digitalWrite(S3, LOW);
+  return pulseIn(sensorOut, LOW);
 }
 
 // Function to read Green Pulse Widths
 int getGreenPW() {
-
-  // Set sensor to read Green only
-  digitalWrite(S2,HIGH);
-  digitalWrite(S3,HIGH);
-  // Define integer to represent Pulse Width
-  int PW;
-  // Read the output Pulse Width
-  PW = pulseIn(sensorOut, LOW);
-  // Return the value
-  return PW;
-
+  digitalWrite(S2, HIGH);
+  digitalWrite(S3, HIGH);
+  return pulseIn(sensorOut, LOW);
 }
 
 // Function to read Blue Pulse Widths
 int getBluePW() {
-
-  // Set sensor to read Blue only
-  digitalWrite(S2,LOW);
-  digitalWrite(S3,HIGH);
-  // Define integer to represent Pulse Width
-  int PW;
-  // Read the output Pulse Width
-  PW = pulseIn(sensorOut, LOW);
-  // Return the value
-  return PW;
-
+  digitalWrite(S2, LOW);
+  digitalWrite(S3, HIGH);
+  return pulseIn(sensorOut, LOW);
 }
-

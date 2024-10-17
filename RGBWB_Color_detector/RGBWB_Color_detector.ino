@@ -58,12 +58,12 @@ void loop() {
   // Delay to stabilize sensor
   
   // Print output to Serial Monitor
-  Serial.print("Red PW = ");
   Serial.print(redPW);
-  Serial.print(" - Green PW = ");
+  Serial.print(",");
   Serial.print(greenPW);
-  Serial.print(" - Blue PW = ");
+  Serial.print(",");
   Serial.println(bluePW);
+
 
   int thres = 200;
    if(redPW < thres && greenPW < thres && bluePW < thres){
